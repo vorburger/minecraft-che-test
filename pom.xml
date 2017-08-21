@@ -89,8 +89,13 @@
 
   <repositories>
     <repository>
-        <id>sponge</id>
-        <url>http://repo.spongepowered.org/maven</url>
+      <id>sponge</id>
+      <url>http://repo.spongepowered.org/maven</url>
+    </repository>
+    <repository>
+      <id>project.local</id>
+      <name>project</name>
+      <url>file:${project.basedir}/repo</url>
     </repository>
 </repositories>
 </project>
