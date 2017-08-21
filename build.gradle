@@ -1,0 +1,46 @@
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.3.0'
+  }
+}
+
+repositories {
+  mavenLocal()
+  jcenter()
+  maven { url "http://repo.spongepowered.org/maven" }
+}
+
+apply plugin: 'java'
+apply plugin: 'biz.aQute.bnd.builder'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+  compile 'ch.vorburger.minecraft:ch.vorburger.minecraft.osgi.api:1.0.0-SNAPSHOT'
+  compile 'org.osgi:org.osgi.core:6.0.0'
+}
+
+apply plugin: 'maven'
+
+group = 'ch.vorburger.minecraft'
+// artifactId is taken by default, from folder name
+version = '0.0.1-SNAPSHOT'
+
+task writeNewPom << {
+    pom {
+        project {
+            inceptionYear '2014'
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+        }
+    }.writeTo("pom.xml")
+}
