@@ -29,7 +29,7 @@ public class HelloWorldCommand implements CommandRegistration, CommandExecutor {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        src.sendMessage(Text.of("Hello World!"));
+        src.sendMessage(Text.of("Hello to the openshift World!"));
         return CommandResult.success();
     }
 
