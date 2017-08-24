@@ -14,6 +14,7 @@
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <!-- <fabric8.generator.from>docker.io/edewit/minecraft-plugin-centos</fabric8.generator.from> -->
   </properties>
   <dependencies>
     <dependency>
@@ -61,7 +62,7 @@
 				</configuration>
 			</plugin>
     
-      <!-- <plugin>
+      <plugin>
         <groupId>io.fabric8</groupId>
         <artifactId>fabric8-maven-plugin</artifactId>
         <version>3.5.22</version>
@@ -75,6 +76,38 @@
         </executions>
       
         <configuration>
+          <fabric8>
+            <build>
+              <strategy>s2i</strategy>
+            </build>
+          </fabric8>
+          <images>
+            <image>
+              <name>${project.artifactId}:${project.version}</name>
+              <build>
+                <from>docker.io/edewit/minecraft-plugin-centos</from>
+                <!-- <fromExt>
+                  <namespace>docker.io</namespace>
+                  <kind>ImageStreamImage</kind>
+                  <name>edewit/minecraft-plugin-centos</name>
+                </fromExt> -->
+                <assembly>
+                  <targetDir>/tmp/src</targetDir>
+                  <inline>
+                  <fileSets>
+                    <fileSet>
+                      <directory>.</directory>
+                      <includes>
+                        <include>*</include>
+                      </includes>
+                      <outputDirectory>/</outputDirectory>
+                    </fileSet>
+                  </fileSets>
+                  </inline>
+                </assembly>
+              </build>
+            </image>
+          </images>
           <resources>
             <labels>
               <all>
@@ -83,7 +116,7 @@
             </labels>
           </resources>
         </configuration>
-      </plugin> -->
+      </plugin>
     </plugins>
   </build>
 
