@@ -60,6 +60,24 @@
 					</archive>
 				</configuration>
 			</plugin>
+
+      <plugin>
+        <groupId>ch.nerdin.minecraft</groupId>
+        <artifactId>source-sync-maven-plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <configuration>
+          <serverUri>ws://localhost:9191</serverUri>
+        </configuration>
+        <executions>
+          <execution>
+            <id>sync</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>sync</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     
       <!-- <plugin>
         <groupId>io.fabric8</groupId>
