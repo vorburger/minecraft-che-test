@@ -30,7 +30,7 @@ objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
-    name: minecraft-sponge-osgi-plugin
+    name: health-check-vertx
   spec: {}
 - apiVersion: v1
   kind: ImageStream
@@ -45,12 +45,12 @@ objects:
 - apiVersion: v1
   kind: BuildConfig
   metadata:
-    name: minecraft-sponge-osgi-plugin
+    name: health-check-vertx
   spec:
     output:
       to:
         kind: ImageStreamTag
-        name: minecraft-sponge-osgi-plugin:latest
+        name: health-check-vertx:latest
     postCommit: {}
     resources: {}
     source:
@@ -84,21 +84,21 @@ objects:
   kind: Service
   metadata:
     annotations:
-      fabric8.io/scm-con-url: scm:git:https://github.com/openshiftio/booster-parent.git/minecraft-sponge-osgi-plugin
+      fabric8.io/scm-con-url: scm:git:https://github.com/openshiftio/booster-parent.git/health-check-vertx
       prometheus.io/port: "9779"
-      fabric8.io/scm-url: https://github.com/openshiftio/minecraft-sponge-osgi-plugin
-      fabric8.io/iconUrl: img/icons/sponge.svg
+      fabric8.io/scm-url: https://github.com/openshiftio/health-check-vertx
+      fabric8.io/iconUrl: img/icons/vertx.svg
       fabric8.io/git-branch: master
       prometheus.io/scrape: "true"
-      fabric8.io/scm-devcon-url: scm:git:git:@github.com:openshiftio/booster-parent.git/minecraft-sponge-osgi-plugin
+      fabric8.io/scm-devcon-url: scm:git:git:@github.com:openshiftio/booster-parent.git/health-check-vertx
       fabric8.io/scm-tag: booster-parent-11
     labels:
       expose: "true"
-      app: minecraft-sponge-osgi-plugin
+      app: health-check-vertx
       provider: fabric8
       version: 15-SNAPSHOT
       group: io.openshift.booster
-    name: minecraft-sponge-osgi-plugin
+    name: health-check-vertx
   spec:
     ports:
     - name: http
@@ -106,31 +106,31 @@ objects:
       protocol: TCP
       targetPort: 7791
     selector:
-      app: minecraft-sponge-osgi-plugin
+      app: health-check-vertx
       provider: fabric8
       group: io.openshift.booster
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
     annotations:
-      fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=minecraft-sponge-osgi-plugin&var-version=15-SNAPSHOT
-      fabric8.io/scm-con-url: scm:git:https://github.com/openshiftio/booster-parent.git/minecraft-sponge-osgi-plugin
-      fabric8.io/scm-url: https://github.com/openshiftio/minecraft-sponge-osgi-plugin
-      fabric8.io/iconUrl: img/icons/sponge.svg
+      fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=health-check-vertx&var-version=15-SNAPSHOT
+      fabric8.io/scm-con-url: scm:git:https://github.com/openshiftio/booster-parent.git/health-check-vertx
+      fabric8.io/scm-url: https://github.com/openshiftio/health-check-vertx
+      fabric8.io/iconUrl: img/icons/vertx.svg
       fabric8.io/git-branch: master
-      fabric8.io/scm-devcon-url: scm:git:git:@github.com:openshiftio/booster-parent.git/minecraft-sponge-osgi-plugin
+      fabric8.io/scm-devcon-url: scm:git:git:@github.com:openshiftio/booster-parent.git/health-check-vertx
       fabric8.io/scm-tag: booster-parent-11
     labels:
-      app: minecraft-sponge-osgi-plugin
+      app: health-check-vertx
       provider: fabric8
       version: 15-SNAPSHOT
       group: io.openshift.booster
-    name: minecraft-sponge-osgi-plugin
+    name: health-check-vertx
   spec:
     replicas: 1
     revisionHistoryLimit: 2
     selector:
-      app: minecraft-sponge-osgi-plugin
+      app: health-check-vertx
       provider: fabric8
       group: io.openshift.booster
     strategy:
@@ -140,15 +140,15 @@ objects:
     template:
       metadata:
         annotations:
-          fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=minecraft-sponge-osgi-plugin&var-version=15-SNAPSHOT
-          fabric8.io/scm-con-url: scm:git:https://github.com/openshiftio/booster-parent.git/minecraft-sponge-osgi-plugin
-          fabric8.io/scm-url: https://github.com/openshiftio/minecraft-sponge-osgi-plugin
-          fabric8.io/iconUrl: img/icons/sponge.svg
+          fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=health-check-vertx&var-version=15-SNAPSHOT
+          fabric8.io/scm-con-url: scm:git:https://github.com/openshiftio/booster-parent.git/health-check-vertx
+          fabric8.io/scm-url: https://github.com/openshiftio/health-check-vertx
+          fabric8.io/iconUrl: img/icons/vertx.svg
           fabric8.io/git-branch: master
-          fabric8.io/scm-devcon-url: scm:git:git:@github.com:openshiftio/booster-parent.git/minecraft-sponge-osgi-plugin
+          fabric8.io/scm-devcon-url: scm:git:git:@github.com:openshiftio/booster-parent.git/health-check-vertx
           fabric8.io/scm-tag: booster-parent-11
         labels:
-          app: minecraft-sponge-osgi-plugin
+          app: health-check-vertx
           provider: fabric8
           version: 15-SNAPSHOT
           group: io.openshift.booster
@@ -159,30 +159,61 @@ objects:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
-          image: minecraft-sponge-osgi-plugin:latest
+          image: health-check-vertx:latest
           imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 1
+            httpGet:
+              path: /api/health/liveness
+              port: 7791
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 1
+          name: vertx
+          ports:
+          - containerPort: 7791
+            name: http
+            protocol: TCP
+          - containerPort: 9779
+            name: prometheus
+            protocol: TCP
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /api/health/readiness
+              port: 7791
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 3
+            timeoutSeconds: 1
+          securityContext:
+            privileged: false
     triggers:
     - type: ConfigChange
     - imageChangeParams:
         automatic: true
         containerNames:
-        - sponge
+        - vertx
         from:
           kind: ImageStreamTag
-          name: minecraft-sponge-osgi-plugin:latest
+          name: health-check-vertx:latest
       type: ImageChange
 - apiVersion: v1
   kind: Route
   metadata:
     labels:
-      app: minecraft-sponge-osgi-plugin
+      app: health-check-vertx
       provider: fabric8
       version: 15-SNAPSHOT
       group: io.openshift.booster
-    name: minecraft-sponge-osgi-plugin
+    name: health-check-vertx
   spec:
     port:
       targetPort: 7791
     to:
       kind: Service
-      name: minecraft-sponge-osgi-plugin
+      name: health-check-vertx
