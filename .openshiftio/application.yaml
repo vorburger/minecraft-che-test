@@ -159,13 +159,36 @@ objects:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
+            - name: JAVA_OPTS
+              value: >-
+                -Xms756m -Xmx756m -XX:+UnlockExperimentalVMOptions
+                -XX:+UseCGroupMemoryLimitForHeap -XX:+UseParallelGC
+                -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4
+            - name: MAVEN_OPTS
+              value: '-Xms256m -Xmx256m'
           image: minecraft-server:latest
           imagePullPolicy: IfNotPresent
-          name: vertx
+          name: minecraft-server
           ports:
           - containerPort: 7791
             name: http
             protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 7791
+              scheme: HTTP
+            initialDelaySeconds: 596
+            periodSeconds: 10
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: '2'
+              memory: 1G
+            requests:
+              cpu: '2'
+              memory: 1G
           securityContext:
             privileged: false
     triggers:
