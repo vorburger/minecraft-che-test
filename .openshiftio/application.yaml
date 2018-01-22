@@ -196,7 +196,7 @@ objects:
     - imageChangeParams:
         automatic: true
         containerNames:
-        - vertx
+        - minecraft-server
         from:
           kind: ImageStreamTag
           name: minecraft-server:latest
